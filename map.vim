@@ -25,4 +25,15 @@ vnoremap < <gv
 inoremap jk <Esc>
 
 " Open NERDTree.
-noremap <Tab> :NERDTreeFocus<CR>
+function CustomNerdTreeToggle()
+    if &filetype == 'nerdtree'
+        :NERDTreeToggle
+    elseif g:NERDTree.IsOpen()
+        :NERDTreeFocus
+    elseif @% == ""
+        :NERDTree
+    else
+        :NERDTreeFind
+    endif
+endfun
+noremap <silent> <Tab> :call CustomNerdTreeToggle()<CR>
