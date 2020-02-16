@@ -37,3 +37,6 @@ function CustomNerdTreeToggle()
     endif
 endfun
 noremap <silent> <Tab> :call CustomNerdTreeToggle()<CR>
+
+" Hebrew mode
+nnoremap <silent> <C-w> :set rl<CR> :set keymap=hebrew_utf-8<CR>
