@@ -1,14 +1,13 @@
-" Edit/Delete current word.
-nnoremap t viwoc
-nnoremap T viWoc
-nnoremap <C-t> viwod
-nnoremap <C-T> viWod
+let mapleader = " "
+
+" map CapsLock to Esc. This is on you!
+" $ setxkbmap -option caps:escape
 
 " Delete search marks.
-nnoremap <C-@> :noh<CR>
+nnoremap <Leader>h :noh<CR>
 
 " Insert newline below cursor.
-nnoremap <C-o> mzo<Esc>`z
+nnoremap <Leader>o mzo<Esc>`z
 
 " Copy till end of line.
 nnoremap Y y$
@@ -17,26 +16,82 @@ nnoremap Y y$
 cnoremap <C-p> <Up>
 cnoremap <C-n> <Down>
 
+" Move between tabs with Ctrl-n and Ctrl-p
+nnoremap <C-n> gt
+nnoremap <C-p> gT
+
+" Create an close tabs
+nnoremap <Leader>t :tabnew<CR>
+nnoremap <Leader>T :tabclose<CR>
+
+" Paste without cutting in visual mode
+vnoremap p pgvy
+
 " Makes it easier to select lines and shift them multiple times.
 vnoremap > >gv
 vnoremap < <gv
 
-" Easier way to escape modes.
-inoremap jk <Esc>
+" Go to next tag
+nnoremap <Leader>] :tn<CR>
 
-" Open NERDTree.
-function CustomNerdTreeToggle()
-    if &filetype == 'nerdtree'
-        :NERDTreeToggle
-    elseif g:NERDTree.IsOpen()
-        :NERDTreeFocus
-    elseif @% == ""
-        :NERDTree
-    else
-        :NERDTreeFind
+nnoremap <Leader>q :cn<CR>
+nnoremap <Leader>Q :cp<CR>
+
+" Easy movement in insert mode
+inoremap <C-h> <C-Left>
+inoremap <C-l> <C-Right>
+inoremap <C-j> <Left>
+inoremap <C-k> <Right>
+
+" Search for the current selection with * and # in visual mode.
+function! s:VSetSearch()
+	let temp = @s
+	norm! gv"sy
+	let @/ = '\V' . substitute(escape(@s, '/\'), '\n', '\\n', 'g')
+	let @s = temp
+endfunction
+xnoremap * :<C-u>call <SID>VSetSearch()<CR>/<C-R>=@/<CR><CR>
+xnoremap # :<C-u>call <SID>VSetSearch()<CR>?<C-R>=@/<CR><CR>
+
+:command Q q
+:command Qa qa
+:command QA qa
+:command W w
+:command Wa wa
+:command WA wa
+:command Wq wq
+:command WQ wq
+:command Wqa wqa
+:command WQa wqa
+:command WQA wqa
+
+
+function! GetBufferList()
+  redir =>buflist
+  silent! ls!
+  redir END
+  return buflist
+endfunction
+
+function! ToggleList(bufname, pfx)
+  let buflist = GetBufferList()
+  for bufnum in map(filter(split(buflist, '\n'), 'v:val =~ "'.a:bufname.'"'), 'str2nr(matchstr(v:val, "\\d\\+"))')
+    if bufwinnr(bufnum) != -1
+      exec(a:pfx.'close')
+      return
     endif
-endfun
-noremap <silent> <Tab> :call CustomNerdTreeToggle()<CR>
+  endfor
+  if a:pfx == 'l' && len(getloclist(0)) == 0
+      echohl ErrorMsg
+      echo "Location List is Empty."
+      return
+  endif
+  let winnr = winnr()
+  exec(a:pfx.'open')
+  if winnr() != winnr
+    wincmd p
+  endif
+endfunction
 
-" Hebrew mode
-nnoremap <silent> <C-w> :set rl<CR> :set keymap=hebrew_utf-8<CR>
+" Toggle quickfix list
+nmap <silent> <leader>E :call ToggleList("Quickfix List", 'c')<CR>

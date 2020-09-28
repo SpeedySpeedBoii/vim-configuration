@@ -12,21 +12,26 @@ Plugin 'VundleVim/Vundle.vim' " :)
 
 Plugin 'rafi/awesome-vim-colorschemes' " :)
 
-Plugin 'easymotion/vim-easymotion'
+Plugin 'ycm-core/YouCompleteMe' " :)
 
-Plugin 'unblevable/quick-scope' " :)
+Plugin 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plugin 'junegunn/fzf.vim'
 
-Plugin 'preservim/nerdcommenter'
+" Plugin 'easymotion/vim-easymotion'
 
-Plugin 'vim-syntastic/syntastic' " :)
+" Plugin 'unblevable/quick-scope' " :)
 
-"Plugin 'ycm-core/YouCompleteMe'
+" Plugin 'preservim/nerdcommenter'
 
-Plugin 'honza/vim-snippets'
+" Plugin 'vim-syntastic/syntastic' " :)
+
+" Plugin 'ycm-core/YouCompleteMe'
+
+" Plugin 'honza/vim-snippets'
 
 Plugin 'preservim/nerdtree' " :)
 
-Plugin 'vim-scripts/cscope.vim'
+"Plugin 'vim-scripts/cscope.vim'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
