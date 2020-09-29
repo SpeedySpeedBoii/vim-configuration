@@ -1,3 +1,4 @@
+
 let mapleader = " "
 
 " map CapsLock to Esc. This is on you!
@@ -42,6 +43,10 @@ inoremap <C-h> <C-Left>
 inoremap <C-l> <C-Right>
 inoremap <C-j> <Left>
 inoremap <C-k> <Right>
+cnoremap <C-h> <C-Left>
+cnoremap <C-l> <C-Right>
+cnoremap <C-j> <Left>
+cnoremap <C-k> <Right>
 
 " Search for the current selection with * and # in visual mode.
 function! s:VSetSearch()
@@ -95,3 +100,9 @@ endfunction
 
 " Toggle quickfix list
 nmap <silent> <leader>E :call ToggleList("Quickfix List", 'c')<CR>
+
+nnoremap <Leader>c :cscope find c <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>C :execute "cscope find c " . input('Function name: ')<CR>
+
+nnoremap <Leader>i :cscope find i %<CR>
+nnoremap <Leader>I :execute "cscope find i " . input('Header name: ')<CR>

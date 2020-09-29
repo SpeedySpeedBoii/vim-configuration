@@ -25,9 +25,8 @@ set statusline=2
 set showmode
 
 " Line length
-set nowrap
+set wrap
 set colorcolumn=100
-set textwidth=100
 
 " Shift
 set shiftwidth=4
@@ -53,12 +52,18 @@ set t_vb=
 set tm=500
 set belloff=all
 
-" Initialize ctags in the background when opening and saving a file
-" You must put a file named 'tags' in the root dir of the projects,
+" Initialize ctags in the background and cscope when opening and saving a file
+" You must put a 'tags' file in the root dir of the projects,
 " and always open files from the root directory.
 let ctags_init_command = "test -f tags && ctags -R --c-kinds=+defgpstux -o newtags && mv newtags tags&"
+let cscope_init_command = "test -f tags && cscope -Rbq"
 autocmd BufWritePost * call system(ctags_init_command)
+autocmd BufWritePost * call system(cscope_init_command) | cscope reset
 autocmd BufReadPre,FileReadPre * call system(ctags_init_command)
+autocmd BufReadPre,FileReadPre * call system(cscope_init_command) | cscope reset
+if filereadable("cscope.out")
+    cscope add cscope.out
+endif
 
 " Highlight trailing spaces
 highlight ExtraWhitespace ctermbg=red guibg=red
@@ -69,3 +74,10 @@ match ExtraWhitespace /\s\+$/
 " Fold only functions in C files.
 autocmd FileType c setlocal foldmethod=syntax
 autocmd FileType c set foldnestmax=1
+
+" Makes Ctrl-Left and Ctrl-Right jump between words in command mode.
+execute "set <xUp>=\e[1;*A"
+execute "set <xDown>=\e[1;*B"
+execute "set <xRight>=\e[1;*C"
+execute "set <xLeft>=\e[1;*D"
+

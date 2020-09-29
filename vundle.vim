@@ -17,6 +17,12 @@ Plugin 'ycm-core/YouCompleteMe' " :)
 Plugin 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plugin 'junegunn/fzf.vim'
 
+Plugin 'airblade/vim-gitgutter.git'
+
+Plugin 'ervandew/supertab'
+
+Plugin 'SirVer/ultisnips' | Plugin 'honza/vim-snippets'
+
 " Plugin 'easymotion/vim-easymotion'
 
 " Plugin 'unblevable/quick-scope' " :)
