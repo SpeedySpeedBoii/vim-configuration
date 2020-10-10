@@ -21,7 +21,9 @@ Plugin 'airblade/vim-gitgutter.git'
 
 Plugin 'ervandew/supertab'
 
-Plugin 'SirVer/ultisnips' | Plugin 'honza/vim-snippets'
+Plugin 'SirVer/ultisnips'
+
+Plugin 'preservim/tagbar'
 
 " Plugin 'easymotion/vim-easymotion'
 

@@ -1,7 +1,8 @@
 sudo apt install -y cscope
+rm -rf bundle
 mkdir ~/.vim/bundle
 mkdir ~/.vim/bundle/Vundle.vim
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 cp ~/.vim/vimrc ~/.vimrc
 vim +PluginInstall +qall
-python3 ~/.vim/bundle/YouCompleteMe/install.py --all
+python3 ~/.vim/bundle/YouCompleteMe/install.py --clang-completer

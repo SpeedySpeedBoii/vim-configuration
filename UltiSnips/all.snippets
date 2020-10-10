@@ -1,0 +1,201 @@
+global !p
+import os
+import re
+
+def get_error_string_snippet(log_function, message, arguments, ret_var):
+    snippet = "\"{}".format(message)
+
+    string_args_list = []
+    string_args_list.append(ret_var)
+    if (arguments.strip() != ''):
+        snippet += " "
+        arg_list = [get_last_word(arg) for arg in arguments.split(',')]
+        default_arg_type = "p"
+        string_list = []
+        i = 2
+        j = 101
+
+        for arg in arg_list:
+            string_args_list.append("${{{}}}{}".format(str(j), arg))
+            j += 1
+            current_string = "${{{}:{}}}".format(str(i), arg)
+            i += 1
+            current_string += "=%${{{}:{}}}".format(str(i), default_arg_type)
+            i += 1
+            string_list.append(current_string)
+
+        snippet += ' '.join(string_list)
+
+    snippet += "\", "
+    snippet += ", ".join(string_args_list)
+    return snippet
+
+def get_docstring_snippet(function_retval, arguments):
+    arg_list = [get_last_word(arg) for arg in arguments.split(',')]
+    snippet = "/**\n"
+    snippet += " * @brief    $1\n"
+    snippet += " *\n"
+    arg_max_length = len(max(arg_list, key=len))
+    i = 2
+    for arg in arg_list:
+        snippet += " * @param[${}]{}{}{}${}\n".format(str(i),
+                                                      "`!p snip.rv = ' ' * (5 - (len(t[{}]) % 5))`".format(i),
+                                                      arg.ljust(arg_max_length),
+                                                      ' ' * (8 - arg_max_length % 4),
+                                                      str(i+1))
+        i += 2
+
+    snippet += " *\n"
+    snippet += " * @return  enum status\n"
+    snippet += " */"
+    return snippet
+
+def get_last_word(string, default='DEFAULT'):
+    words = re.findall("[\w\d]+", string)
+    if not words:
+        return default
+    else:
+        return words[-1].strip()
+
+def do_call_post_jump():
+    if snip.tabstop == 0:
+        log_function = snip.tabstops[1].current_text
+        arguments = snip.tabstops[5].current_text
+        message = "{} returned %${{1:d}}.".format(get_last_word(snip.tabstops[4].current_text))
+        if arguments.strip() != '':
+            message += " args:"
+        ret_var = snip.tabstops[3].current_text
+        snippet = get_error_string_snippet(log_function, message, arguments, ret_var)
+        snip.expand_anon(snippet)
+
+def do_scall_post_jump():
+    if snip.tabstop == 0:
+        log_function = snip.tabstops[1].current_text
+        arguments = snip.tabstops[4].current_text
+        message = "{} returned %d.".format(get_last_word(snip.tabstops[3].current_text))
+        if arguments.strip() != '':
+            message += " args:"
+        snippet = get_error_string_snippet(log_function, message, arguments, "status")
+        snip.expand_anon(snippet)
+
+def do_declaration_post_jump():
+    if snip.tabstop == 0:
+        snippet = get_docstring_snippet(snip.tabstops[3].current_text);
+        snip.expand_anon(snippet)
+
+def do_definition_post_jump():
+    if snip.tabstop == 0:
+        log_function = "LOG"
+        message = "Invalid parameters"
+        arguments = snip.tabstops[5].current_text
+        status_string = 'Returning status %d'
+        snippet = get_error_string_snippet(log_function, message, arguments, status_string)
+        snip.expand_anon(snippet)
+
+endglobal
+
+post_jump "do_call_post_jump()"
+snippet call "Function call" b
+$3 = $4($5);
+if ($6) {
+    status = STATUS_FAILURE;
+    ${1:LOG}(${2:ERROR}, $0);
+    goto cleanup;
+}
+endsnippet
+
+post_jump "do_scall_post_jump()"
+snippet scall "Function call that returns a status" b
+status = $3($4);
+if (STATUS_FAILED(status)) {
+    ${1:LOG}(${2:ERROR}, $0);
+    goto cleanup;
+}
+endsnippet
+
+post_jump "do_declaration_post_jump()"
+snippet declaration "Function declaration with docstring" b
+$0
+${1:static }enum status $2($3);
+endsnippet
+
+post_jump "do_definition_post_jump()"
+snippet definition "Function definition" b
+${1:static }enum status $4($5)
+{
+    enum status status = STATUS_UNINITIALIZED;
+
+    /* Validate parameters. */
+    if ($6) {
+        status = STATUS_INVALID_PARAMETERS;
+        LOG($0);
+        goto cleanup;
+    }
+
+    /* Indicate success. */
+    status = STATUS_SUCCESS;
+
+cleanup:
+    return status;
+}
+endsnippet
+
+snippet hfile "A .h file" b
+//*********************************************************
+// File:          `!v expand("%")`
+// Author:        Yuval Yehezkel
+// Created:       `date +%d.%m.%y`
+//*********************************************************
+
+#ifndef __$1_H__
+#define __$1_H__
+
+//*********************************************************
+// Headers
+//*********************************************************
+#include "common.h"
+
+//*********************************************************
+// Constants
+//*********************************************************
+
+//*********************************************************
+// Macros
+//*********************************************************
+
+//*********************************************************
+// Enums
+//*********************************************************
+
+//*********************************************************
+// Typedefs
+//*********************************************************
+
+//*********************************************************
+// Structs
+//*********************************************************
+
+//*********************************************************
+// Functions
+//*********************************************************
+
+#endif // __$1_H__
+endsnippet
+
+snippet cfile "A .c file" b
+//*********************************************************
+// File:          `!v expand("%")`
+// Author:        Yuval Yehezkel
+// Created:       `date +%d.%m.%y`
+//*********************************************************
+
+//*********************************************************
+// Headers
+//*********************************************************
+#include "`!v expand("%:r") . "_internal.h"`"
+
+//*********************************************************
+// Functions
+//*********************************************************
+
+endsnippet
