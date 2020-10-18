@@ -27,7 +27,7 @@ nnoremap <C-n> gt
 nnoremap <C-p> gT
 " }}}
 
-" Create an close tabs {{{
+" Create and close tabs {{{
 nnoremap <Leader>t :tabnew<CR>
 nnoremap <Leader>T :tabclose<CR>
 " }}}
@@ -36,7 +36,11 @@ nnoremap <Leader>T :tabclose<CR>
 vnoremap p pgvy
 " }}}
 
-" Makes it easier to select lines and shift them multiple times. {{{
+" Delete trailing white spaces {{{
+map <silent> <Leader>rs :%s/\v\s+$//g<cr>:noh<cr>
+" }}}
+
+" Easy shifting in visual mode {{{
 vnoremap > >gv
 vnoremap < <gv
 " }}}
@@ -78,19 +82,8 @@ xnoremap # :<C-u>call <SID>VSetSearch()<CR>?<C-R>=@/<CR><CR>
 :command WQA wqa
 " }}}
 
-
 " Toggle quickfix list {{{
 nmap <silent> <leader>E :call ToggleList("Quickfix List", 'c')<CR>
-" }}}
-
-" Find all calls to a function with cscope. {{{
-nnoremap <Leader>c :cscope find c <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>C :execute "cscope find c " . input('Function name: ')<CR>
-" }}}
-
-" Find all files that include a header with cscope. {{{
-nnoremap <Leader>i :cscope find i %<CR>
-nnoremap <Leader>I :execute "cscope find i " . input('Header name: ')<CR>
 " }}}
 
 " Grep operator mappings {{{
@@ -104,6 +97,15 @@ nnoremap <silent> <Leader>ps :execute "call PasteNewStatuses()"<cr>
 
 " Split arguments multiple lines {{{
 nnoremap <Leader>s :execute "call SplitArgumentsMultipleLines()"<cr>
+" }}}
+
+" Coc maps {{{
+nmap <silent> <Leader>jd <Plug>(coc-definition)
+nmap <silent> <Leader>js <Plug>(coc-declaration)
+nmap <silent> <Leader>jr <Plug>(coc-references-used)
+nmap <silent> <Leader>w <Plug>(coc-diagnostic-next)
+nmap <silent> <Leader>W <Plug>(coc-diagnostic-prev)
+nmap <silent> <Leader>rn <Plug>(coc-rename)
 " }}}
 
 " Functions {{{

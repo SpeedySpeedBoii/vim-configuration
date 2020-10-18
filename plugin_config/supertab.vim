@@ -1,1 +1,1 @@
-let g:SuperTabDefaultCompletionType = '<C-n>'
+let g:SuperTabDefaultCompletionType = "<c-n>"

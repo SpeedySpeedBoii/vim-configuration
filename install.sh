@@ -1,4 +1,5 @@
-sudo apt install -y cscope
+sudo snap install -y ccls --classic
+sudo apt install -y nodejs
 rm -rf bundle
 mkdir ~/.vim/bundle
 mkdir ~/.vim/bundle/Vundle.vim
